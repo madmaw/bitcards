@@ -1,0 +1,241 @@
+<Game title="Higher!" blurb="A game of psychology, strategy, and bluffing for three or more players.">
+    <Description>
+        <p>This game involves winning the most tricks. You win a trick by playing the highest value card in the trick.</p>
+        <ol>
+            <li>Shuffle all the cards and place them in a pile</li>
+            <li>Ensure all the players have joined the game</li>
+            <li>Follow the prompt, and start drawing cards. The app will tell you when to stop drawing</li>
+            <li>Place any left over cards from the draw pile to one side</li>
+            <li>The app will nominate a player to go first, this player places their a card of their choice face up</li>
+            <li>All other players go, they place their cards face down</li>
+            <li>The player who played the highest value card wins the trick and goes first for the next round</li>
+        </ol>
+        <p>The game finishes once everyone has no more cards in their hand. The player with the most tricks wins!</p>
+    </Description>
+    <ScriptLanguage>JavaScript</ScriptLanguage>
+    <PlayerJoinScript>
+        var instruction;
+        var valid = true;
+        // are any of the players already holding cards?
+        var cardsPerHand = Math.floor(Object.keys(g.cs).length / (g.pys.length+1));
+        for( var i in g.pys ) {
+            var player = g.pys[i];
+            if( player.hand.cs.length ) {
+                valid = false;
+            }
+        }
+        if( !valid ) {
+            instruction = "Hold";
+        } else {
+            instruction = "Draw";
+        }
+        r = {
+            pa: {
+                i: instruction
+            },
+            pp: {
+                v: valid
+            },
+            gp: {
+                c: cardsPerHand
+            }
+        };
+    </PlayerJoinScript>
+    <LibraryScript id="card-draw">
+        <![CDATA[
+        // TODO filter out invalid players
+        var cardCount = g.ps.c;
+        var failed = g.drawDeck.cardIds.indexOf(c.id) < 0 || !p.ps.v;
+        var instruction;
+        var first = false;
+        if( p.hand.cs.length >= cardCount - 1 ) {
+            // are we the last to draw our last card?
+            var last = true;
+            for( var i in g.pys ) {
+                var player = g.pys[i];
+                if( player.hand.cs.length < cardCount && player.id != p.id ) {
+                    last = false;
+                }
+            }
+            if( last ) {
+                // the last person to draw plays
+                instruction = "Play";
+                first = true;
+            } else {
+                instruction = "Hold";
+            }
+        } else {
+            instruction = "Draw";
+        }
+        // next action
+        var actions = {};
+        actions[p.id] = {
+            i: instruction
+        };
+        var playerProperties = {};
+        playerProperties[p.id] = {
+            f: first
+        };
+        r = {
+            as: actions,
+            f: failed,
+            pps: playerProperties
+        };
+        ]]>
+    </LibraryScript>
+    <LibraryScript id="card-play">
+        <![CDATA[
+        // TODO filter out invalid players
+
+        var first = p.ps.f;
+        var instruction;
+        var actions = {};
+        if(first) {
+            for( var i in g.pys ) {
+                var py = g.pys[i];
+                actions[py.id] = {
+                    i: "Play"
+                }
+            }
+        }
+        actions[p.id] = {
+            i: "Hold"
+        };
+        var last = true;
+        var winner;
+        var winValue = 0;
+        for( var i in g.pys ) {
+            var py = g.pys[i];
+            var d = g.ps[py.id];
+            if( py.id == p.id ) {
+                d = c.id;
+            }
+            if( !d ) {
+                last = false;
+            } else {
+                if( d > winValue ) {
+                    winner = py;
+                    winValue = d;
+                }
+            }
+        }
+        var playerProperties = {};
+        var gameProperties = {};
+        if( last ) {
+            for( var i in g.pys ) {
+                var py = g.pys[i];
+                actions[py.id] = {
+                    i: "Hold"
+                };
+                gameProperties[py.id] = null;
+                playerProperties[py.id] = {f: py.id==winner.id};
+            }
+            var instruction;
+            if( p.hand.cs.length > 1 ) {
+                // if its the last hand, nobody can play
+                instruction = "Play";
+            } else {
+                instruction = "NoGame";
+            }
+            actions[winner.id] = {
+                i: instruction
+            };
+        } else {
+            gameProperties[p.id] = c.id;
+        }
+
+        var failed = !p.ps.v;
+
+        /*
+        out.println("actions "+JSON.stringify(actions));
+        out.println("gameProperties "+JSON.stringify(gameProperties));
+        out.println("playerProperties "+JSON.stringify(playerProperties));
+        out.println("f "+JSON.stringify(failed));
+        */
+
+        r = {
+            as: actions,
+            gps: gameProperties,
+            pps: playerProperties,
+            f: failed
+        };
+        ]]>
+    </LibraryScript>
+
+    <Property key="rounds">0</Property>
+
+    <Card id="1" title="One">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="2" title="Two">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="3" title="Three">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="4" title="Four">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <!--
+    <Card id="5" title="Five">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="6" title="Six">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="7" title="Seven">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="8" title="Eight">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="9" title="Nine">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="10" title="Ten">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="11" title="Eleven">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="12" title="Twelve">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="13" title="Thirteen">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="14" title="Fourteen">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="15" title="Fifteen">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="16" title="Sixteen">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="17" title="Seventeen">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    <Card id="18" title="Eighteen">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+    </Card>
+    -->
+</Game>

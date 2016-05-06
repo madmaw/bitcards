@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.darklanders</groupId>
+    <artifactId>bitcards-android</artifactId>
+    <version>${bitcards.version}</version>
+    <packaging>apk</packaging>
+    <name>bitcards-android</name>
+
+    <parent>
+        <groupId>com.darklanders</groupId>
+        <artifactId>bitcards</artifactId>
+        <version>1</version>
+    </parent>
+
+
+
+    <dependencies>
+
+        <!-- internal deps -->
+        <dependency>
+            <groupId>com.darklanders</groupId>
+            <artifactId>bitcards-common</artifactId>
+            <version>${bitcards.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>2.3.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.journeyapps</groupId>
+            <artifactId>zxing-android-embedded</artifactId>
+            <version>3.2.0</version>
+            <type>aar</type>
+            <exclusions>
+                <!-- exclude jar import for aar import -->
+                <exclusion>
+                    <groupId>com.android.support</groupId>
+                    <artifactId>support-v4</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.android.support</groupId>
+            <artifactId>appcompat-v7</artifactId>
+            <version>23.3.0</version>
+            <type>aar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.android.support</groupId>
+            <artifactId>support-v4</artifactId>
+            <version>23.1.0</version>
+            <type>aar</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <version>3.8.2</version>
+                <configuration>
+                    <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+                    <assetsDirectory>${project.basedir}/assets</assetsDirectory>
+                    <resourceDirectory>${project.basedir}/res</resourceDirectory>
+                    <nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>
+
+                    <sdk>
+                        <platform>23</platform>
+                    </sdk>
+                </configuration>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>update-manifest</id>
+                        <goals>
+                            <goal>manifest-update</goal>
+                        </goals>
+                        <configuration>
+                            <manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <profiles>
+
+        <profile><!-- release profile. uses keystore defined in keystore.* properties. signs and zipaligns the app to the target folder-->
+            <id>release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+
+                <defaultGoal>package</defaultGoal>
+                <finalName>${project.artifactId}-${project.version}</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jarsigner-plugin</artifactId>
+                        <version>1.2</version>
+                        <executions>
+                            <execution>
+                                <id>signing</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <inherited>true</inherited>
+                                <configuration>
+                                    <includes>
+                                        <include>${project.build.directory}/${project.build.finalName}.apk</include>
+                                    </includes>
+                                    <keystore>${project.basedir}/release.keystore</keystore>
+                                    <storepass>blue02</storepass>
+                                    <keypass>blue02</keypass>
+                                    <alias>bitcards</alias>
+                                    <verbose>true</verbose>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <artifactId>android-maven-plugin</artifactId>
+                        <configuration>
+                            <release>true</release>
+
+                            <resourceOverlayDirectory>${project.basedir}/res-release</resourceOverlayDirectory>
+                            <zipalign>
+                                <verbose>true</verbose>
+                                <skip>false</skip><!-- defaults to true -->
+                                <inputApk>${project.build.directory}/${project.build.finalName}.apk</inputApk>
+                                <outputApk>${project.build.directory}/bitcards-${project.version}.apk</outputApk>
+                            </zipalign>
+                            <sign>
+                                <debug>false</debug>
+                            </sign>
+                            <classifier>release</classifier>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>zipalign</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>zipalign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+		<profile><!-- builds an debug signed apk-->
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<defaultGoal>package</defaultGoal>
+				<finalName>${project.artifactId}-${project.version}-DEV</finalName>
+				<plugins>
+					<plugin>
+						<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+						<artifactId>android-maven-plugin</artifactId>
+						<configuration>
+                            <resourceOverlayDirectory>${project.basedir}/res-dev</resourceOverlayDirectory>
+							<sign>
+								<debug>true</debug>
+							</sign>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

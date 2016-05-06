@@ -1,0 +1,157 @@
+<Game title="Memory" blurb="A game for one player. Can you match all the cards?">
+    <Description>
+        <p>This game is a test of your memory.</p>
+        <ol>
+            <li>Shuffle all the cards and place the entire deck face-down to one side</li>
+            <li>Draw a card (and scan it) and look at it</li>
+            <li>Place the card face down somewhere in front of you</li>
+            <li>Draw another card (and scan it)</li>
+            <li>Does it match a previously drawn card? If so, scan that card (without looking at it), if not place that card face down in front of you</li>
+            <li>Repeat until the deck is empty</li>
+        </ol>
+        <p>Once all the cards are gone, you win!</p>
+        <p>If you either put down a card that has a match in play or pick the wrong match, you lose and the game ends.</p>
+    </Description>
+    <ScriptLanguage>JavaScript</ScriptLanguage>
+    <PlayerJoinScript>
+        var instruction;
+        if( g.players.length ) {
+            instruction = "Hold";
+        } else {
+            instruction = "Draw";
+        }
+        r = {
+            pa: {
+                i: instruction
+            }
+        };
+    </PlayerJoinScript>
+    <LibraryScript id="card-draw">
+        <![CDATA[
+
+        // does the card match a previous match?
+        var inPlay = g.decks.play.cardIds.indexOf(c.id) >= 0;
+        var instruction;
+        var failed = false;
+        var previousCardId = g.ps.pc;
+        if( inPlay ) {
+            // does the previous card match?
+            if( previousCardId != c.id ) {
+                if( previousCardId[0] == c.id[0] ) {
+                    instruction = "Draw";
+                } else {
+                    instruction = "NoGame";
+                }
+            } else {
+                // double scan of same card
+                failed = true;
+            }
+        } else {
+            // should we have drawn an in-play card?
+            var count = 0;
+            if( previousCardId ) {
+                for( var i in g.decks.play.cardIds ) {
+                    var playedCardId = g.decks.play.cardIds[i];
+                    if( playedCardId[0] == previousCardId[0] ) {
+                        count++;
+                    }
+                }
+            }
+            if( count == 2 ) {
+                instruction = "NoGame";
+            } else {
+                instruction = "Draw";
+            }
+        }
+        // play action
+        var actions = {};
+        actions[p.id] = {
+            i: instruction
+        };
+        r = {
+            as: actions,
+            gps: {
+                pc: c.id
+            },
+            deck: "play",
+            f: failed
+        };
+        ]]>
+    </LibraryScript>
+
+    <Property key="rounds">0</Property>
+    <Deck id="play"></Deck>
+    <Card id="a1" title="Ape">
+        <DrawScript ref="card-draw"/>
+        <Description>Apes are really big monkeys</Description>
+    </Card>
+    <Card id="a2" title="Ape">
+        <DrawScript ref="card-draw"/>
+        <Description>Apes are really big monkeys</Description>
+    </Card>
+    <Card id="b1" title="Bear">
+        <DrawScript ref="card-draw"/>
+        <Description>Bears are generally quite cuddly</Description>
+    </Card>
+    <Card id="b2" title="Bear">
+        <DrawScript ref="card-draw"/>
+        <Description>Bears are generally quite cuddly</Description>
+    </Card>
+
+    <Card id="c1" title="Cat">
+        <DrawScript ref="card-draw"/>
+        <Description>Never look a cat directly in the eye</Description>
+    </Card>
+    <Card id="c2" title="Cat">
+        <DrawScript ref="card-draw"/>
+        <Description>Never look a cat directly in the eye</Description>
+    </Card>
+    <Card id="d1" title="Dog">
+        <DrawScript ref="card-draw"/>
+        <Description>Dogs have a great sense of smell, but smell pretty bad themselves</Description>
+    </Card>
+    <Card id="d2" title="Dog">
+        <DrawScript ref="card-draw"/>
+        <Description>Dogs have a great sense of smell, but smell pretty bad themselves</Description>
+    </Card>
+    <Card id="e1" title="Elephant">
+        <DrawScript ref="card-draw"/>
+        <Description>They're pretty big I guess</Description>
+    </Card>
+    <Card id="e2" title="Elephant">
+        <DrawScript ref="card-draw"/>
+        <Description>They're pretty big I guess</Description>
+    </Card>
+    <Card id="f1" title="Frog">
+        <DrawScript ref="card-draw"/>
+        <Description>Prettier than a toad</Description>
+    </Card>
+    <Card id="f2" title="Frog">
+        <DrawScript ref="card-draw"/>
+        <Description>Prettier than a toad</Description>
+    </Card>
+    <Card id="g1" title="Gnu">
+        <DrawScript ref="card-draw"/>
+        <Description>A hippy cow</Description>
+    </Card>
+    <Card id="g2" title="Gnu">
+        <DrawScript ref="card-draw"/>
+        <Description>A hippy cow</Description>
+    </Card>
+    <Card id="h1" title="Horse">
+        <DrawScript ref="card-draw"/>
+        <Description>A large dog with hooves that eats grass</Description>
+    </Card>
+    <Card id="h2" title="Horse">
+        <DrawScript ref="card-draw"/>
+        <Description>A large dog with hooves that eats grass</Description>
+    </Card>
+    <Card id="i1" title="Ibis">
+        <DrawScript ref="card-draw"/>
+        <Description>Sacred bird that forages from bins and steals babies</Description>
+    </Card>
+    <Card id="i2" title="Ibis">
+        <DrawScript ref="card-draw"/>
+        <Description>Sacred bird that forages from bins and steals babies</Description>
+    </Card>
+</Game>

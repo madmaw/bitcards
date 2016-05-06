@@ -1,0 +1,106 @@
+<Game title="Solo" blurb="A game for one player.">
+    <Description>
+        <p>This is a test game only, it has no actual challenge or real game play.</p>
+        <ol>
+            <li>Pick up a card</li>
+            <li>Then discard that card, or skip your turn</li>
+            <li>Repeat</li>
+        </ol>
+        <p>Once all the cards are gone, you win!</p>
+    </Description>
+    <ScriptLanguage>JavaScript</ScriptLanguage>
+    <PlayerJoinScript>
+        var instruction;
+        if( g.players.length ) {
+            instruction = "Hold";
+        } else {
+            instruction = "Draw";
+        }
+        r = {
+            pa: {
+                i: instruction
+            }
+        };
+    </PlayerJoinScript>
+    <LibraryScript id="card-draw">
+        <![CDATA[
+        var failed = g.drawDeck.cardIds.indexOf(c.id) < 0;
+        // skip action (draw again)
+        var skipActions = {}
+        skipActions[p.id] = {
+            i: "Draw"
+        };
+        var skipResult = {
+            as: skipActions
+        };
+        // play action
+        var actions = {};
+        actions[p.id] = {
+            i: "Play",
+            s: skipResult
+        };
+        r = {
+            as: actions,
+            f: failed
+        };
+        ]]>
+    </LibraryScript>
+    <LibraryScript id="card-play">
+        var actions = {};
+        actions[p.id] = {
+            i: "Draw"
+        };
+        r = {
+            as: actions
+        };
+    </LibraryScript>
+
+    <Property key="rounds">0</Property>
+
+    <Card id="1" title="One">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+        <Description>The first card</Description>
+    </Card>
+    <Card id="2" title="Two">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+        <Description>The second card</Description>
+    </Card>
+    <Card id="3" title="Three">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+        <Description>The third card</Description>
+    </Card>
+    <Card id="4" title="Four">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+        <Description>The fourth card</Description>
+    </Card>
+
+    <Card id="5" title="Five">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+        <Description>The fifth card</Description>
+    </Card>
+    <Card id="6" title="Six">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+        <Description>The sixth card</Description>
+    </Card>
+    <Card id="7" title="Seven">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+        <Description>The seventh card</Description>
+    </Card>
+    <Card id="8" title="Eight">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+        <Description>The eighth card</Description>
+    </Card>
+    <Card id="9" title="Nine">
+        <DrawScript ref="card-draw"/>
+        <PlayScript ref="card-play"/>
+        <Description>The ninth card</Description>
+    </Card>
+</Game>

@@ -17,4 +17,6 @@ public interface Device {
 
     boolean isErroring();
 
+    Instruction getCurrentInstruction();
+
 }

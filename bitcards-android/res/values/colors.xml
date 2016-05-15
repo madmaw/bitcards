@@ -1,4 +1,30 @@
 <resources>
-    <color name="off">#FF3333</color>
-    <color name="on">#AAFFAA</color>
+
+    <color name="scan_shadow">#333333</color>
+    <color name="scan_rectangle">#FFFF33</color>
+
+    <color name="scan_draw">@color/scan_shadow</color>
+    <color name="scan_draw_fg">@color/scan_rectangle</color>
+
+    <color name="scan_play">@color/scan_shadow</color>
+    <color name="scan_play_fg">@color/scan_rectangle</color>
+
+    <color name="scan_game">@color/scan_shadow</color>
+    <color name="scan_game_fg">@color/scan_rectangle</color>
+
+    <color name="scan_receive">@color/scan_shadow</color>
+    <color name="scan_receive_fg">@color/scan_rectangle</color>
+
+    <color name="scan_ok">#AAFFAA</color>
+    <color name="scan_ok_fg">#FFFFFF</color>
+
+    <color name="disconnected">#333333</color>
+    <color name="disconnected_fg">#FFFFFF</color>
+
+    <color name="hold">#000000</color>
+    <color name="hold_fg">#FFFFFF</color>
+
+    <color name="user_error">#FF0000</color>
+    <color name="user_error_fg">#FFFFFF</color>
+
 </resources>

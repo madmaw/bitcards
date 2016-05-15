@@ -172,6 +172,11 @@ public class ScriptedDevice implements Device {
     }
 
     @Override
+    public Instruction getCurrentInstruction() {
+        return this.standingInstruction;
+    }
+
+    @Override
     public int hashCode() {
         return this.id.hashCode();
     }

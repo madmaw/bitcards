@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">bitcards</string>
+
+    <string name="scan_ok">SCAN OK</string>
+    <string name="scan_game">SCAN GAME</string>
+    <string name="scan_draw">DRAW</string>
+    <string name="scan_play">PLAY</string>
+    <string name="scan_receive">RECEIVE</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="user_error">Invalid Move</string>
+    <string name="hold">Hold</string>
 </resources>

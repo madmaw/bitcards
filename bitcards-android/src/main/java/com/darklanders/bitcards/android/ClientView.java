@@ -12,6 +12,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.*;
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,17 @@ import java.util.List;
  * Created by Chris on 25/04/2016.
  */
 public class ClientView {
+
+    private static final int[] TRANSIENT_VIEWS = {
+            R.id.scan_draw,
+            R.id.scan_ok,
+            R.id.scan_play,
+            R.id.scan_game,
+            R.id.scan_receive,
+            R.id.disconnected,
+            R.id.user_error,
+            R.id.hold
+    };
 
     private class ClientViewFlasher extends Thread {
 
@@ -38,13 +50,15 @@ public class ClientView {
                         ClientView.this.activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                View view = ClientView.this.activity.findViewById(R.id.off);
                                 if( !viewVisible ^ on ) {
                                     barcodeView.setTorch(on);
-                                    if( !on ) {
-                                        view.setVisibility(View.VISIBLE);
-                                    } else {
-                                        view.setVisibility(View.GONE);
+                                    if( sequenceViewId != null ) {
+                                        View view = ClientView.this.activity.findViewById(sequenceViewId);
+                                        if( on ) {
+                                            view.setVisibility(View.VISIBLE);
+                                        } else {
+                                            view.setVisibility(View.GONE);
+                                        }
                                     }
                                     viewVisible = !on;
                                 }
@@ -74,6 +88,7 @@ public class ClientView {
     private Activity activity;
 
     private long[] sequence;
+    private Integer sequenceViewId;
     private int index;
     private ClientViewFlasher flasher;
     private BarcodeView barcodeView;
@@ -82,7 +97,6 @@ public class ClientView {
     private ClientApiListener clientApiListener;
 
     private View.OnClickListener onClickListener;
-    private View.OnLongClickListener onLongClickListener;
 
     private SensorEventListener sensorEventListener;
     private SensorManager sensorManager;
@@ -104,13 +118,6 @@ public class ClientView {
             @Override
             public void onClick(View view) {
                 touch();
-            }
-        };
-        this.onLongClickListener = new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                longTouch();
-                return true;
             }
         };
         this.sequence = new long[]{0, 1000};
@@ -189,35 +196,67 @@ public class ClientView {
 
     }
 
-    public void setInstruction(Instruction instruction) {
+    public void setInstruction(final Instruction instruction) {
         if( instruction != this.currentInstruction ) {
-            this.currentInstruction = instruction;
-            switch (instruction) {
+            final ArrayList<Integer> toShow = new ArrayList<Integer>();
+            long[] sequence;
+            Integer sequenceViewId = null;
+            switch(instruction) {
+                default:
                 case Hold:
+                    toShow.add(R.id.hold);
+                    sequence = new long[]{0, 1000};
+                    break;
                 case ScanOk:
-                    setSequence(new long[]{0, 1000});
+                    toShow.add(R.id.scan_ok);
+                    sequence = new long[]{0, 1000};
                     break;
                 case Draw:
-                    setSequence(new long[]{1000, 0});
+                    toShow.add(R.id.scan_draw);
+                    sequence = new long[]{1000, 0};
+                    sequenceViewId = R.id.scan_draw;
                     break;
                 case Play:
-                    setSequence(new long[]{500, 500});
+                    toShow.add(R.id.scan_play);
+                    sequence = new long[]{500, 500};
+                    sequenceViewId = R.id.scan_play;
                     break;
                 case Disconnected:
-                    setSequence(new long[]{200, 2000});
+                    toShow.add(R.id.disconnected);
+                    sequence = new long[]{200, 2000};
                     break;
                 case NoGame:
-                    setSequence(new long[]{2000, 200});
+                    toShow.add(R.id.scan_game);
+                    sequence = new long[]{2000, 200};
+                    sequenceViewId = R.id.scan_game;
                     break;
                 case InvalidMove:
-                    setSequence(new long[]{10, 10});
+                    toShow.add(R.id.user_error);
+                    sequence = new long[]{10, 10};
                     break;
             }
+            setSequence(sequence, sequenceViewId);
+            this.currentInstruction = instruction;
+            this.activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // just hide everything, the turn on the bits we want
+                    for( int viewId : TRANSIENT_VIEWS ) {
+                        View view = ClientView.this.activity.findViewById(viewId);
+                        view.setVisibility(View.INVISIBLE);
+                    }
+                    for( int viewId : toShow ) {
+                        View view = ClientView.this.activity.findViewById(viewId);
+                        view.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
         }
     }
 
-    public void setSequence(long[] sequence) {
+    public void setSequence(long[] sequence, Integer sequenceViewId) {
         synchronized (this) {
+            this.sequenceViewId = sequenceViewId;
             this.sequence = sequence;
             this.index = 0;
         }
@@ -225,16 +264,6 @@ public class ClientView {
 
     public void touch() {
         this.clientApi.tap();
-    }
-
-    public void longTouch() {
-        this.showCamera = !this.showCamera;
-        View onView = this.activity.findViewById(R.id.on);
-        if( this.showCamera ) {
-            onView.setVisibility(View.INVISIBLE);
-        } else {
-            onView.setVisibility(View.VISIBLE);
-        }
     }
 
     public void start(ClientApi clientApi) {
@@ -245,7 +274,6 @@ public class ClientView {
         this.flasher.start();
         View view = this.activity.findViewById(R.id.main);
         view.setOnClickListener(this.onClickListener);
-        view.setOnLongClickListener(this.onLongClickListener);
 
         this.sensorManager.registerListener(this.sensorEventListener, this.accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
 

@@ -6,26 +6,126 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true">
-
-    <com.journeyapps.barcodescanner.BarcodeView
-            android:id="@+id/barcode_scanner"
+    <FrameLayout
+            android:id="@+id/barcode_scanner_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:zxing_use_texture_view="false"
-            app:zxing_preview_scaling_strategy="fitCenter"
-            />
+            android:layout_height="match_parent">
+        <com.journeyapps.barcodescanner.BarcodeView
+                android:id="@+id/barcode_scanner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:zxing_use_texture_view="false"
+                app:zxing_preview_scaling_strategy="fitCenter"
+        />
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent">
+            <!-- pad it out -->
+            <ImageView
+                    android:layout_width="230dp"
+                    android:layout_height="230dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/scan_rectangle"/>
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1"
+                    android:paddingTop="10dp">
+                <TextView
+                        android:id="@+id/scan_play"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|center_horizontal"
+                        android:textColor="@color/scan_play_fg"
+                        android:text="@string/scan_play"
+                        style="@style/scan_text"/>
+                <TextView
+                        android:id="@+id/scan_draw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|center_horizontal"
+                        android:textColor="@color/scan_draw_fg"
+                        android:shadowColor="@color/scan_draw"
+                        android:text="@string/scan_draw"
+                        style="@style/scan_text"/>
+                <TextView
+                        android:id="@+id/scan_game"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|center_horizontal"
+                        android:textColor="@color/scan_game_fg"
+                        android:text="@string/scan_game"
+                        style="@style/scan_text"/>
+                <TextView
+                        android:id="@+id/scan_receive"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|center_horizontal"
+                        android:textColor="@color/scan_receive_fg"
+                        android:text="@string/scan_receive"
+                        style="@style/scan_text"/>
+            </FrameLayout>
+        </LinearLayout>
+    </FrameLayout>
 
-    <View
-            android:id="@+id/on"
-            android:background="@color/on"
+    <!-- Scan OK -->
+    <FrameLayout
+            android:id="@+id/scan_ok"
+            android:background="@color/scan_ok"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+        <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/scan_ok"
+                style="@style/main_text"/>
+    </FrameLayout>
 
-    <View
-            android:id="@+id/off"
-            android:background="@color/off"
+    <!-- Disconnected -->
+    <FrameLayout
+            android:id="@+id/disconnected"
+            android:background="@color/disconnected"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+        <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/disconnected"
+                style="@style/main_text"/>
+    </FrameLayout>
 
+    <!-- Hold -->
+    <FrameLayout
+            android:id="@+id/hold"
+            android:background="@color/hold"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hold"
+                android:textColor="@color/hold_fg"
+                style="@style/main_text"/>
+    </FrameLayout>
+    <!-- User Error -->
+    <FrameLayout
+            android:id="@+id/user_error"
+            android:background="@color/user_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_error"
+                android:textColor="@color/user_error_fg"
+                style="@style/main_text"/>
+    </FrameLayout>
 
 </FrameLayout>

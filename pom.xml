@@ -88,7 +88,7 @@
 
     <properties>
         <!-- bitcards version -->
-        <bitcards.version>1.0.3</bitcards.version>
+        <bitcards.version>1.0.4</bitcards.version>
     </properties>
 
     <build>

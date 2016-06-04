@@ -81,31 +81,10 @@
                             Everyone should then start the app and lay their phone down flat (face up).
                         </flowPara>
                         <flowPara  font-size="{$description-height}" bottom-margin="{$description-height}">
-                            One player should scan the QR code at the top of this page. Scanning the QR code again will restart the game. You scan a code by holding it steady facing the camera. Once successful you will see a long red flash.
+                            One player should scan the QR code at the top of this page. Scanning the QR code again will restart the game. You scan a code by holding it steady facing the camera. Once successful you will see &quot;Scan OK&quot;.
                         </flowPara>
                         <flowPara  font-size="{$description-height}" bottom-margin="{$description-height}">
-                            Once you are connected and the game is started, your phone will flash instructions to you.
-                        </flowPara>
-                        <flowPara  font-size="{$title-height}" font-weight="bold" bottom-margin="{$description-height}">
-                            Sequences
-                        </flowPara>
-                        <flowPara  font-size="{$description-height}" bottom-margin="{$description-height}">
-                            <flowSpan font-weight="bold">RRRR</flowSpan> - Hold, do nothing. An all red flash of approximately 2 seconds in duration will indicate a successful scan and will preceed any changes in state
-                        </flowPara>
-                        <flowPara  font-size="{$description-height}" bottom-margin="{$description-height}">
-                            <flowSpan font-weight="bold">GGGG</flowSpan> - Draw, pick up a card and scan it
-                        </flowPara>
-                        <flowPara  font-size="{$description-height}" bottom-margin="{$description-height}">
-                            <flowSpan font-weight="bold">RGRG</flowSpan> - Play, play a card from your hand, make sure to scan it before you play it
-                        </flowPara>
-                        <flowPara  font-size="{$description-height}" bottom-margin="{$description-height}">
-                            <flowSpan font-weight="bold">RRRG</flowSpan> - No connection, you need to connect to a hot-spotted phone running the app
-                        </flowPara>
-                        <flowPara  font-size="{$description-height}" bottom-margin="{$description-height}">
-                            <flowSpan font-weight="bold">GGGR</flowSpan> - No Game, you need to scan the QR code above
-                        </flowPara>
-                        <flowPara  font-size="{$description-height}" bottom-margin="{$description-height}">
-                            <flowSpan font-weight="bold">Flashing Quickly</flowSpan> - User Error, you made a mistake, undo whatever you just did
+                            Once you are connected and the game is started, your phone will display instructions to you.
                         </flowPara>
 
                     </flowDiv>

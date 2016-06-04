@@ -180,7 +180,6 @@
         <DrawScript ref="card-draw"/>
         <PlayScript ref="card-play"/>
     </Card>
-    <!--
     <Card id="5" title="Five">
         <DrawScript ref="card-draw"/>
         <PlayScript ref="card-play"/>
@@ -237,5 +236,5 @@
         <DrawScript ref="card-draw"/>
         <PlayScript ref="card-play"/>
     </Card>
-    -->
+
 </Game>
